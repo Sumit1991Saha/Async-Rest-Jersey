@@ -6,6 +6,7 @@ import static junit.framework.Assert.assertNotNull;
 import com.saha.model.Book;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
+import org.glassfish.jersey.test.TestProperties;
 import org.junit.Test;
 
 import java.util.Collection;
@@ -16,6 +17,8 @@ public class BookResourceTest extends JerseyTest {
 
     @Override
     protected Application configure() {
+        enable(TestProperties.LOG_TRAFFIC);
+        enable(TestProperties.DUMP_ENTITY);
         return new ResourceConfig().packages("com.saha");
     }
 
