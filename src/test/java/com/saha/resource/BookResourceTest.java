@@ -6,8 +6,6 @@ import static junit.framework.Assert.assertNotNull;
 import com.saha.application.BookApplication;
 import com.saha.dao.BookDao;
 import com.saha.model.Book;
-import org.glassfish.hk2.utilities.binding.AbstractBinder;
-import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
 import org.junit.Test;
@@ -15,6 +13,7 @@ import org.junit.Test;
 import java.util.Collection;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.Response;
 
 public class BookResourceTest extends JerseyTest {
 
@@ -28,13 +27,17 @@ public class BookResourceTest extends JerseyTest {
 
     @Test
     public void getBook() {
-        Book book = target("books").path("1").request().get(Book.class);
+        Response response = target("books").path("1").request().get();
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        Book book = response.readEntity(Book.class);
         assertNotNull(book);
     }
 
     @Test
     public void getBooks() {
-        Collection<Book> books = target("books").request().get(new GenericType<Collection<Book>>() {});
+        Response response = target("books").request().get();
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        Collection<Book> books = response.readEntity(new GenericType<Collection<Book>>() {});
         assertEquals(2, books.size());
     }
 
@@ -42,8 +45,14 @@ public class BookResourceTest extends JerseyTest {
     public void testDao() {
         //Each call to this api results in instantiation of Dao Class again and again
         //hence the objects are different. This problem can be solved by dependency injection.
-        Book book1 = target("books").path("1").request().get(Book.class);
-        Book book2 = target("books").path("1").request().get(Book.class);
+        Response response1 = target("books").path("1").request().get();
+        assertEquals(Response.Status.OK.getStatusCode(), response1.getStatus());
+        Book book1 = response1.readEntity(Book.class);
+
+        Response response2 = target("books").path("1").request().get();
+        assertEquals(Response.Status.OK.getStatusCode(), response2.getStatus());
+        Book book2 = response2.readEntity(Book.class);
+
         assertEquals(book1, book2);
     }
 }

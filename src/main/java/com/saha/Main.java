@@ -2,9 +2,7 @@ package com.saha;
 
 import com.saha.application.BookApplication;
 import com.saha.dao.BookDao;
-import com.saha.model.Book;
 import org.glassfish.grizzly.http.server.HttpServer;
-import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 
