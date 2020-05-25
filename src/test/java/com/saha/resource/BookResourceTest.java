@@ -47,6 +47,21 @@ public class BookResourceTest extends JerseyTest {
     }
 
     @Test
+    public void addBookAsync() {
+        Book book = new Book();
+        book.setAuthor("Author");
+        book.setTitle("Title");
+        book.setIsbn("1234");
+        book.setPublishedDate(new Date());
+        Response response = target("/books-async").request().post(Entity.entity(book, MediaType.APPLICATION_JSON));
+
+        assertEquals(200, response.getStatus());
+        Book createdBook = response.readEntity(Book.class);
+        assertTrue(createdBook.getId() != 0);
+        assertEquals("Author", createdBook.getAuthor());
+    }
+
+    @Test
     public void getBook() {
         Response response = target("books").path("1").request().get();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
@@ -55,8 +70,30 @@ public class BookResourceTest extends JerseyTest {
     }
 
     @Test
+    public void getBookAsync() {
+        Response response = target("books-async").path("1").request().get();
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        Book book = response.readEntity(Book.class);
+        assertNotNull(book);
+    }
+
+    @Test
     public void getBooks() {
         Response response = target("books").request().get();
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        Collection<Book> books = response.readEntity(new GenericType<Collection<Book>>() {});
+        assertEquals(2, books.size());
+    }
+
+    @Test
+    public void getBooksAsync() {
+        // This call doesn't work with Moxy - JSON (currently a bug exist) in returning a response which has Collections.
+        // this leads to
+        // org.glassfish.jersey.message.internal.MessageBodyProviderNotFoundException:
+        // MessageBodyWriter not found for media type=application/json,
+        // type=class java.util.concurrent.ConcurrentHashMap$ValuesView,
+        // genericType=class java.util.concurrent.ConcurrentHashMap$ValuesView.
+        Response response = target("books-async").request().get();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         Collection<Book> books = response.readEntity(new GenericType<Collection<Book>>() {});
         assertEquals(2, books.size());
