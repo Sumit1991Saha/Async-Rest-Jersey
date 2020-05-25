@@ -1,7 +1,9 @@
 package com.saha.resource;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 
 import com.saha.application.BookApplication;
 import com.saha.dao.BookDao;
@@ -11,8 +13,12 @@ import org.glassfish.jersey.test.TestProperties;
 import org.junit.Test;
 
 import java.util.Collection;
+import java.util.Date;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.MediaType;
+
 import javax.ws.rs.core.Response;
 
 public class BookResourceTest extends JerseyTest {
@@ -23,6 +29,21 @@ public class BookResourceTest extends JerseyTest {
         enable(TestProperties.DUMP_ENTITY);
         BookDao bookDao = new BookDao();
         return new BookApplication(bookDao);
+    }
+
+    @Test
+    public void addBook() {
+        Book book = new Book();
+        book.setAuthor("Author");
+        book.setTitle("Title");
+        book.setIsbn("1234");
+        book.setPublishedDate(new Date());
+        Response response = target("/books").request().post(Entity.entity(book, MediaType.APPLICATION_JSON));
+
+        assertEquals(200, response.getStatus());
+        Book createdBook = response.readEntity(Book.class);
+        assertTrue(createdBook.getId() != 0);
+        assertEquals("Author", createdBook.getAuthor());
     }
 
     @Test
@@ -55,4 +76,6 @@ public class BookResourceTest extends JerseyTest {
 
         assertEquals(book1, book2);
     }
+
+
 }
