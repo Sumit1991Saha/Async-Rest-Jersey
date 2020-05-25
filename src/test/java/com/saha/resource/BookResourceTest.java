@@ -3,6 +3,7 @@ package com.saha.resource;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
+import com.saha.application.BookApplication;
 import com.saha.dao.BookDao;
 import com.saha.model.Book;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
@@ -22,13 +23,7 @@ public class BookResourceTest extends JerseyTest {
         enable(TestProperties.LOG_TRAFFIC);
         enable(TestProperties.DUMP_ENTITY);
         BookDao bookDao = new BookDao();
-        return new ResourceConfig().packages("com.saha")
-                .register(new AbstractBinder() {
-                    @Override
-                    protected void configure() {
-                        bind(bookDao).to(BookDao.class);
-                    }
-                });
+        return new BookApplication(bookDao);
     }
 
     @Test

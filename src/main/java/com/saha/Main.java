@@ -1,5 +1,6 @@
 package com.saha;
 
+import com.saha.application.BookApplication;
 import com.saha.dao.BookDao;
 import com.saha.model.Book;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -26,13 +27,7 @@ public class Main {
         // create a resource config that scans for JAX-RS resources and providers
         // in com.saha package
         BookDao bookDao = new BookDao();
-        final ResourceConfig rc = new ResourceConfig().packages("com.saha")
-                .register(new AbstractBinder() {
-                    @Override
-                    protected void configure() {
-                        bind(bookDao).to(BookDao.class);
-                    }
-                });
+        final ResourceConfig rc = new BookApplication(bookDao);
 
         // create and start a new instance of grizzly http server
         // exposing the Jersey application at BASE_URI
