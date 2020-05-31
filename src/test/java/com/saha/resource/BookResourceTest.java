@@ -1,7 +1,6 @@
 package com.saha.resource;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
@@ -14,11 +13,12 @@ import org.junit.Test;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
-
 import javax.ws.rs.core.Response;
 
 public class BookResourceTest extends JerseyTest {
@@ -32,12 +32,28 @@ public class BookResourceTest extends JerseyTest {
     }
 
     private Response addBook(String resourcePath, String author, String title, String isbn, Date date, String... extras) {
-        Book book = new Book();
+        /*Book book = new Book();
         book.setAuthor(author);
         book.setTitle(title);
         book.setIsbn(isbn);
         book.setPublishedDate(date);
-        return target(resourcePath).request().post(Entity.entity(book, MediaType.APPLICATION_JSON));
+        Entity<Book> entity = Entity.entity(book, MediaType.APPLICATION_JSON);*/
+
+        Map<String, Object> bookMap = new HashMap<String, Object>() {{
+            put("author", author);
+            put("title", title);
+            put("isbn", isbn);
+            put("publishedDate", date);
+            if (extras != null) {
+                int count = 1;
+                for (String extra : extras) {
+                    put("extra" + count++, extra);
+                }
+            }
+        }};
+        Entity<Map<String, Object>> entity = Entity.entity(bookMap, MediaType.APPLICATION_JSON);
+
+        return target(resourcePath).request().post(entity);
     }
 
     @Test
@@ -113,6 +129,18 @@ public class BookResourceTest extends JerseyTest {
         Book book2 = response2.readEntity(Book.class);
 
         assertEquals(book1, book2);
+    }
+
+    @Test
+    public void addExtraProperty() {
+        String newProperty = "some random property";
+        Response response = addBook("/books", "Author1", "Title", "1234", new Date(),
+                newProperty);
+
+        assertEquals(200, response.getStatus());
+        HashMap<String, Object> createdBook = response.readEntity(new GenericType<HashMap<String, Object>>() {});
+        assertNotNull(createdBook.get("id"));
+        assertEquals(createdBook.get("extra1"), newProperty);
     }
 
 
