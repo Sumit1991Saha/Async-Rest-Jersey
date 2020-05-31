@@ -33,11 +33,15 @@
             <version>${jersey.version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>org.glassfish.jersey.media</groupId>
             <artifactId>jersey-media-moxy</artifactId>
-            <!--<artifactId>jersey-media-json-jackson</artifactId>-->
             <version>${jersey.version}</version>
+        </dependency>-->
+        <dependency>
+            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <artifactId>jackson-jaxrs-json-provider</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -95,6 +99,7 @@
         <junit.version>4.9</junit.version>
         <guava.version>16.0.1</guava.version>
         <lombok.version>1.18.12</lombok.version>
+        <jackson.version>2.3.0</jackson.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 </project>

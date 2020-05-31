@@ -31,34 +31,33 @@ public class BookResourceTest extends JerseyTest {
         return new BookApplication(bookDao);
     }
 
+    private Response addBook(String resourcePath, String author, String title, String isbn, Date date, String... extras) {
+        Book book = new Book();
+        book.setAuthor(author);
+        book.setTitle(title);
+        book.setIsbn(isbn);
+        book.setPublishedDate(date);
+        return target(resourcePath).request().post(Entity.entity(book, MediaType.APPLICATION_JSON));
+    }
+
     @Test
     public void addBook() {
-        Book book = new Book();
-        book.setAuthor("Author");
-        book.setTitle("Title");
-        book.setIsbn("1234");
-        book.setPublishedDate(new Date());
-        Response response = target("/books").request().post(Entity.entity(book, MediaType.APPLICATION_JSON));
+        Response response = addBook("/books", "Author1", "Title", "1234", new Date());
 
         assertEquals(200, response.getStatus());
         Book createdBook = response.readEntity(Book.class);
         assertTrue(createdBook.getId() != 0);
-        assertEquals("Author", createdBook.getAuthor());
+        assertEquals("Author1", createdBook.getAuthor());
     }
 
     @Test
     public void addBookAsync() {
-        Book book = new Book();
-        book.setAuthor("Author");
-        book.setTitle("Title");
-        book.setIsbn("1234");
-        book.setPublishedDate(new Date());
-        Response response = target("/books-async").request().post(Entity.entity(book, MediaType.APPLICATION_JSON));
+        Response response = addBook("/books-async", "Author2", "Title", "1234", new Date());
 
         assertEquals(200, response.getStatus());
         Book createdBook = response.readEntity(Book.class);
         assertTrue(createdBook.getId() != 0);
-        assertEquals("Author", createdBook.getAuthor());
+        assertEquals("Author2", createdBook.getAuthor());
     }
 
     @Test
@@ -93,6 +92,8 @@ public class BookResourceTest extends JerseyTest {
         // MessageBodyWriter not found for media type=application/json,
         // type=class java.util.concurrent.ConcurrentHashMap$ValuesView,
         // genericType=class java.util.concurrent.ConcurrentHashMap$ValuesView.
+
+        // To use the generics with Async request/response use Jackson.
         Response response = target("books-async").request().get();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         Collection<Book> books = response.readEntity(new GenericType<Collection<Book>>() {});
@@ -113,6 +114,9 @@ public class BookResourceTest extends JerseyTest {
 
         assertEquals(book1, book2);
     }
+
+
+
 
 
 }
