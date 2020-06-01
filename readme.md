@@ -27,3 +27,9 @@ Important Points :-
     And also this library helps to convert Hasmap objects into model objects during post request. (https://www.baeldung.com/jackson-map)
 5. using @JsonAnyGetter and @JsonAnySetter on a model object, 
    we have given jackson a data structure to store and retrieve arbitrary values for a model object.
+6. By removing the dependency of server side code (ie model object) on client side by using hashmap instead of model object,
+    client side doesn't need to know the current status of model object on the server side code, 
+    ie. if at all any attribute is removed from model object, our extra's hashmap coupled with @JsonAnyGetter and @JsonAnySetter
+    will cater to that field sent by the client. 
+    If client depends on the model object then any change on the server side model object (especially removing attribute) would have broken the client. 
+    So instead of using Model objects, using hashmap on client side has made the client backward/forward compatible.
