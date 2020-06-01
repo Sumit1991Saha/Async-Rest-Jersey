@@ -19,21 +19,21 @@ public class BookResource {
     @Context BookDao bookDao;
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces({"application/json", "application/xml"})
     public Collection<Book> getBooks() {
         return bookDao.getBooks();
     }
 
     @GET
     @Path("/{book-id}")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Book getBookById(@PathParam("book-id") long bookId) {
         return bookDao.getBookById(bookId);
     }
 
     @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Book createBook(Book book) {
         return bookDao.addBook(book);
     }

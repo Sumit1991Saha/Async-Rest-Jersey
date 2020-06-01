@@ -8,6 +8,14 @@ mvn archetype:generate \
     -DarchetypeVersion=2.7 \  
     -Dpackage=com.saha
     
+Add this in main method, to add logging capability to grizzly server :- 
+Logger l = Logger.getLogger("org.glassfish.grizzly.http.server.HttpHandler");
+l.setLevel(Level.FINE);
+l.setUseParentHandlers(false);
+ConsoleHandler ch = new ConsoleHandler();
+ch.setLevel(Level.ALL);
+l.addHandler(ch);
+    
     
     
     
