@@ -2,11 +2,9 @@ package com.saha.resource;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
 
 import com.saha.application.BookApplication;
 import com.saha.dao.BookDao;
-import com.saha.model.Book;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
 import org.junit.Test;
@@ -32,13 +30,6 @@ public class BookResourceTest extends JerseyTest {
     }
 
     private Response addBook(String resourcePath, String author, String title, String isbn, Date date, String... extras) {
-        /*Book book = new Book();
-        book.setAuthor(author);
-        book.setTitle(title);
-        book.setIsbn(isbn);
-        book.setPublishedDate(date);
-        Entity<Book> entity = Entity.entity(book, MediaType.APPLICATION_JSON);*/
-
         Map<String, Object> bookMap = new HashMap<String, Object>() {{
             put("author", author);
             put("title", title);
@@ -52,35 +43,38 @@ public class BookResourceTest extends JerseyTest {
             }
         }};
         Entity<Map<String, Object>> entity = Entity.entity(bookMap, MediaType.APPLICATION_JSON);
-
         return target(resourcePath).request().post(entity);
+    }
+
+    private HashMap<String, Object> readEntityToHashMap(Response response) {
+        return response.readEntity(new GenericType<HashMap<String, Object>>(){});
     }
 
     @Test
     public void addBook() {
-        Response response = addBook("/books", "Author1", "Title", "1234", new Date());
+        Response response = addBook("/books", "Author1", "Title1", "1234", new Date());
 
         assertEquals(200, response.getStatus());
-        Book createdBook = response.readEntity(Book.class);
-        assertTrue(createdBook.getId() != 0);
-        assertEquals("Author1", createdBook.getAuthor());
+        HashMap<String, Object> createdBook = readEntityToHashMap(response);
+        assertNotNull(createdBook.get("id"));
+        assertEquals("Author1", createdBook.get("author"));
     }
 
     @Test
     public void addBookAsync() {
-        Response response = addBook("/books-async", "Author2", "Title", "1234", new Date());
+        Response response = addBook("/books-async", "Author2", "Title2", "12345", new Date());
 
         assertEquals(200, response.getStatus());
-        Book createdBook = response.readEntity(Book.class);
-        assertTrue(createdBook.getId() != 0);
-        assertEquals("Author2", createdBook.getAuthor());
+        HashMap<String, Object> createdBook = readEntityToHashMap(response);
+        assertNotNull(createdBook.get("id"));
+        assertEquals("Author2", createdBook.get("author"));
     }
 
     @Test
     public void getBook() {
         Response response = target("books").path("1").request().get();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        Book book = response.readEntity(Book.class);
+        HashMap<String, Object> book = readEntityToHashMap(response);
         assertNotNull(book);
     }
 
@@ -88,7 +82,7 @@ public class BookResourceTest extends JerseyTest {
     public void getBookAsync() {
         Response response = target("books-async").path("1").request().get();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        Book book = response.readEntity(Book.class);
+        HashMap<String, Object> book = readEntityToHashMap(response);
         assertNotNull(book);
     }
 
@@ -96,7 +90,8 @@ public class BookResourceTest extends JerseyTest {
     public void getBooks() {
         Response response = target("books").request().get();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        Collection<Book> books = response.readEntity(new GenericType<Collection<Book>>() {});
+        Collection<HashMap<String, Object>> books =
+                response.readEntity(new GenericType<Collection<HashMap<String, Object>>>() {});
         assertEquals(2, books.size());
     }
 
@@ -112,7 +107,8 @@ public class BookResourceTest extends JerseyTest {
         // To use the generics with Async request/response use Jackson.
         Response response = target("books-async").request().get();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        Collection<Book> books = response.readEntity(new GenericType<Collection<Book>>() {});
+        Collection<HashMap<String, Object>> books =
+                response.readEntity(new GenericType<Collection<HashMap<String, Object>>>() {});
         assertEquals(2, books.size());
     }
 
@@ -122,11 +118,11 @@ public class BookResourceTest extends JerseyTest {
         //hence the objects are different. This problem can be solved by dependency injection.
         Response response1 = target("books").path("1").request().get();
         assertEquals(Response.Status.OK.getStatusCode(), response1.getStatus());
-        Book book1 = response1.readEntity(Book.class);
+        HashMap<String, Object> book1 = readEntityToHashMap(response1);
 
         Response response2 = target("books").path("1").request().get();
         assertEquals(Response.Status.OK.getStatusCode(), response2.getStatus());
-        Book book2 = response2.readEntity(Book.class);
+        HashMap<String, Object> book2 = readEntityToHashMap(response2);
 
         assertEquals(book1, book2);
     }
