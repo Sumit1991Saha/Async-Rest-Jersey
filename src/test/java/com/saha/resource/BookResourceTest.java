@@ -7,6 +7,7 @@ import static junit.framework.Assert.assertTrue;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import com.saha.Constants;
 import com.saha.ErrorMessages;
 import com.saha.application.BookApplication;
 import com.saha.dao.BookDao;
@@ -276,6 +277,15 @@ public class BookResourceTest extends JerseyTest {
         Response response = target("/books").path("1").request().get();
         HashMap<String, Object> responseMap = readEntityToHashMap(response);
         assertEquals(updatedAuthor, responseMap.get("author"));
+    }
+
+    @Test
+    public void test_contentNegotiationExtensions() {
+        Response xmlResponse = target("/books").path("1" + "." + Constants.XML).request().get();
+        assertEquals(MediaType.APPLICATION_XML, xmlResponse.getHeaderString(Constants.CONTENT_TYPE));
+
+        Response jsonResponse = target("/books").path("1" + "." + Constants.JSON).request().get();
+        assertEquals(MediaType.APPLICATION_JSON, jsonResponse.getHeaderString(Constants.CONTENT_TYPE));
     }
 
 
