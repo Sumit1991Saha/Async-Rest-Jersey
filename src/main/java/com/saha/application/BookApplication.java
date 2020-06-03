@@ -9,6 +9,7 @@ import com.saha.mapper.NotFoundExceptionMapper;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
+import org.glassfish.jersey.server.filter.HttpMethodOverrideFilter;
 
 public class BookApplication extends ResourceConfig {
     public BookApplication(final BookDao bookDao) {
@@ -31,5 +32,7 @@ public class BookApplication extends ResourceConfig {
 
         //Either add these with @Provider annotation or register in the Resource config class.
         //register(NotFoundExceptionMapper.class);
+
+        register(HttpMethodOverrideFilter.class);
     }
 }

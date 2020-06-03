@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import javax.crypto.interfaces.PBEKey;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.EntityTag;
@@ -259,6 +258,27 @@ public class BookResourceTest extends JerseyTest {
                 .invoke();
         assertEquals(412, updatedResponse2.getStatus());
     }
+
+    @Test
+    public void test_updateBookAuthorUsingPatchMethodOverride() {
+        String updatedAuthor = "new author";
+        HashMap<String, Object> updates = new HashMap<>();
+        updates.put("author", updatedAuthor);
+
+        Entity<HashMap<String, Object>> updatedEntity = Entity.entity(updates, MediaType.APPLICATION_JSON);
+        Response updatedResponse = target("/books").path("1")
+                .queryParam("_method", "PATCH")
+                .request()
+                .post(updatedEntity);
+
+        assertEquals(200, updatedResponse.getStatus());
+
+        Response response = target("/books").path("1").request().get();
+        HashMap<String, Object> responseMap = readEntityToHashMap(response);
+        assertEquals(updatedAuthor, responseMap.get("author"));
+    }
+
+
 
 
 }

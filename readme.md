@@ -41,3 +41,5 @@ Important Points :-
     will cater to that field sent by the client. 
     If client depends on the model object then any change on the server side model object (especially removing attribute) would have broken the client. 
     So instead of using Model objects, using hashmap on client side has made the client backward/forward compatible.
+7. Using grizzly connector (org.glassfish.jersey.connectors:jersey-grizzly-connector) to support Patch HTTP Method, 
+   or use HttpMethodOverrideFilter to use the PATCH method using post technique (in this case default connector provided by Jersey will work).
