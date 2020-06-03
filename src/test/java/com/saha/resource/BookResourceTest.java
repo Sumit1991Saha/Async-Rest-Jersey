@@ -2,6 +2,7 @@ package com.saha.resource;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -294,7 +295,12 @@ public class BookResourceTest extends JerseyTest {
         assertEquals(Constants.BLAH, response.getHeaderString(Constants.X_POWERED_BY));
     }
 
+    @Test
+    public void test_CustomResponseFilterUsingNameBinding() {
+        Response response1 = target("/books").path("1").request().get();
+        assertEquals(Constants.BLAH, response1.getHeaderString(Constants.X_POWERED_BY));
 
-
-
+        Response response2 = target("/books").request().get();
+        assertNull(response2.getHeaderString(Constants.X_POWERED_BY));
+    }
 }

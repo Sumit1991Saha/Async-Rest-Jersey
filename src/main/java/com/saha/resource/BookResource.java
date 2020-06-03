@@ -1,6 +1,8 @@
 package com.saha.resource;
 
+import com.saha.Constants;
 import com.saha.annotation.PATCH;
+import com.saha.annotation.PoweredBy;
 import com.saha.dao.BookDao;
 import com.saha.exception.NotFoundException;
 import com.saha.model.Book;
@@ -31,6 +33,7 @@ public class BookResource {
         return Response.ok(bookDao.getBooks()).build();
     }
 
+    @PoweredBy(Constants.BLAH)
     @GET
     @Path("/{book-id}")
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})

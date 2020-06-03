@@ -6,8 +6,6 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import com.fasterxml.jackson.jaxrs.xml.JacksonXMLProvider;
 import com.saha.Constants;
 import com.saha.dao.BookDao;
-import com.saha.filter.PoweredByFilter;
-import com.saha.mapper.NotFoundExceptionMapper;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
