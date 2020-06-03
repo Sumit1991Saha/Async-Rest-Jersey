@@ -3,6 +3,8 @@ package com.saha.dao;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.saha.ErrorMessages;
+import com.saha.exception.NotFoundException;
 import com.saha.model.Book;
 
 import java.util.Collection;
@@ -55,8 +57,12 @@ public class BookDao {
         return future;
     }
 
-    public Book getBookById(long id) {
-        return books.get(id);
+    public Book getBookById(long id) throws NotFoundException {
+        Book book = books.get(id);
+        if (book == null) {
+            throw new NotFoundException(String.format(ErrorMessages.BOOK_NOT_FOUND, id));
+        }
+        return book;
     }
 
     public ListenableFuture<Book> getBookByIdAsync(final long id) {
@@ -81,6 +87,42 @@ public class BookDao {
             @Override
             public Book call() throws Exception {
                 return addBook(book);
+            }
+        });
+        return future;
+    }
+
+    public Book updateBook(long id, Book updates) throws NotFoundException {
+        if (books.containsKey(id)) {
+            Book book = books.get(id);
+            if (updates.getAuthor() != null) {
+                book.setAuthor(updates.getAuthor());
+            }
+            if (updates.getTitle() != null) {
+                book.setTitle(updates.getTitle());
+            }
+            if (updates.getIsbn() != null) {
+                book.setIsbn(updates.getIsbn());
+            }
+            if (updates.getPublishedDate() != null) {
+                book.setPublishedDate(updates.getPublishedDate());
+            }
+            if (updates.getExtras() != null) {
+                for (String key : updates.getExtras().keySet()) {
+                    book.set(key, updates.getExtras().get(key));
+                }
+            }
+            return book;
+        } else {
+            throw new NotFoundException(String.format(ErrorMessages.BOOK_NOT_FOUND, id));
+        }
+    }
+
+    public ListenableFuture<Book> updateBookAsync(final long id, final Book book) {
+        ListenableFuture<Book> future = executorService.submit(new Callable<Book>() {
+            @Override
+            public Book call() throws Exception {
+                return updateBook(id, book);
             }
         });
         return future;

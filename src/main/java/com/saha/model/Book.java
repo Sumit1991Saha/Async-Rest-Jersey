@@ -39,7 +39,7 @@ public class Book {
     }
 
     @JsonAnySetter
-    public void setExtras(String key, Object value) {
+    public void set(String key, Object value) {
         this.extras.put(key, value);
     }
 

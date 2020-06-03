@@ -1,6 +1,7 @@
 package com.saha.resource;
 
 import com.saha.ErrorMessages;
+import com.saha.annotation.PATCH;
 import com.saha.dao.BookDao;
 import com.saha.exception.NotFoundException;
 import com.saha.model.Book;
@@ -37,10 +38,7 @@ public class BookResource {
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response getBookById(@PathParam("book-id") long bookId) throws NotFoundException {
         Book book = bookDao.getBookById(bookId);
-        if (book == null) {
-            throw new NotFoundException(String.format(ErrorMessages.BOOK_NOT_FOUND, bookId));
-        }
-        EntityTag entityTag = createEntityTag(book);
+        EntityTag entityTag = ResourceHelper.createEntityTag(book);
         Response response;
         Response.ResponseBuilder rb = request.evaluatePreconditions(entityTag);
         if (rb != null) {
@@ -58,7 +56,11 @@ public class BookResource {
         return Response.ok(bookDao.addBook(book)).build();
     }
 
-    EntityTag createEntityTag(Book book) {
-        return new EntityTag(DigestUtils.md5Hex(book.toString()));
+    @PATCH
+    @Path("/{book-id}")
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    public Response updateBook(@PathParam("book-id") long bookId, Book book) throws NotFoundException {
+        return Response.ok(bookDao.updateBook(bookId, book)).build();
     }
 }
