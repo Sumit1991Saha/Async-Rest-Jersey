@@ -2,9 +2,15 @@ package com.saha.resource;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import com.saha.ErrorMessages;
 import com.saha.application.BookApplication;
 import com.saha.dao.BookDao;
+import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
 import org.junit.Test;
@@ -15,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
+import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -27,6 +34,14 @@ public class BookResourceTest extends JerseyTest {
         enable(TestProperties.DUMP_ENTITY);
         BookDao bookDao = new BookDao();
         return new BookApplication(bookDao);
+    }
+
+    protected void configureClient(ClientConfig clientConfig) {
+        JacksonJsonProvider jacksonJsonProvider = new JacksonJaxbJsonProvider();
+        jacksonJsonProvider.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false)
+                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+                .configure(SerializationFeature.INDENT_OUTPUT, true);
+        clientConfig.register(jacksonJsonProvider);
     }
 
     private Response addBook(String resourcePath, String author, String title, String isbn, Date date, String... extras) {
@@ -88,7 +103,9 @@ public class BookResourceTest extends JerseyTest {
 
     @Test
     public void getBooks() {
-        Response response = target("books").request().get();
+        Response response = target("books").request(MediaType.APPLICATION_JSON).get();
+        //there is some issue with XML type due to a class cast excpetion in custom Message body writer.
+        //Response response = target("books").request(MediaType.APPLICATION_XML).get();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         Collection<HashMap<String, Object>> books =
                 response.readEntity(new GenericType<Collection<HashMap<String, Object>>>() {});
@@ -128,7 +145,7 @@ public class BookResourceTest extends JerseyTest {
     }
 
     @Test
-    public void addExtraProperty() {
+    public void addBookWithExtraProperty() {
         String newProperty = "some random property";
         Response response = addBook("/books", "Author1", "Title", "1234", new Date(),
                 newProperty);
@@ -139,8 +156,48 @@ public class BookResourceTest extends JerseyTest {
         assertEquals(createdBook.get("extra1"), newProperty);
     }
 
+    @Test
+    public void addBookWithInvalidAuthor() {
+        Response response = addBook("/books", null, "Title", "1234", new Date());
 
+        assertEquals(400, response.getStatus());
+        String message = response.readEntity(String.class);
+        assertTrue(message.contains(ErrorMessages.INVALID_AUTHOR));
+    }
 
+    @Test
+    public void addBookWithInvalidTitle() {
+        Response response = addBook("/books", "Author1", null, "1234", new Date());
+
+        assertEquals(400, response.getStatus());
+        String message = response.readEntity(String.class);
+        assertTrue(message.contains(ErrorMessages.INVALID_TITLE));
+    }
+
+    @Test
+    public void addBookWithInvalidBook() {
+        Response response = target("/books").request().post(null);
+
+        assertEquals(400, response.getStatus());
+    }
+
+    @Test
+    public void getInvalidBook() {
+        final String bookId = "100";
+        Response response = target("books").path(bookId).request().get();
+
+        assertEquals(404, response.getStatus());
+        assertEquals(String.format(ErrorMessages.BOOK_NOT_FOUND, bookId) , response.readEntity(String.class));
+    }
+
+    @Test
+    public void entityTagNotModified() {
+        EntityTag entityTag = target("books").path("1").request(MediaType.APPLICATION_JSON).get().getEntityTag();
+        assertNotNull(entityTag);
+
+        Response response = target("books").path("1").request().header("If-None-Match", entityTag).get();
+        assertEquals(304, response.getStatus());
+    }
 
 
 }

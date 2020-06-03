@@ -1,4 +1,4 @@
-package com.saha.provider;
+package com.saha.messagebody.writer;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;

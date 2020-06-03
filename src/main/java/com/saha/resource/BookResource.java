@@ -1,9 +1,13 @@
 package com.saha.resource;
 
+import com.saha.ErrorMessages;
 import com.saha.dao.BookDao;
+import com.saha.exception.NotFoundException;
 import com.saha.model.Book;
+import org.apache.commons.codec.digest.DigestUtils;
 
-import java.util.Collection;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -11,30 +15,50 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Request;
+import javax.ws.rs.core.Response;
 
 @Path("/books")
 public class BookResource {
 
     @Context BookDao bookDao;
+    @Context Request request;
 
     @GET
     @Produces({"application/json", "application/xml"})
-    public Collection<Book> getBooks() {
-        return bookDao.getBooks();
+    public Response getBooks() {
+        return Response.ok(bookDao.getBooks()).build();
     }
 
     @GET
     @Path("/{book-id}")
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public Book getBookById(@PathParam("book-id") long bookId) {
-        return bookDao.getBookById(bookId);
+    public Response getBookById(@PathParam("book-id") long bookId) throws NotFoundException {
+        Book book = bookDao.getBookById(bookId);
+        if (book == null) {
+            throw new NotFoundException(String.format(ErrorMessages.BOOK_NOT_FOUND, bookId));
+        }
+        EntityTag entityTag = createEntityTag(book);
+        Response response;
+        Response.ResponseBuilder rb = request.evaluatePreconditions(entityTag);
+        if (rb != null) {
+            response = rb.build();
+        } else {
+            response = Response.ok(book).tag(entityTag).build();
+        }
+        return response;
     }
 
     @POST
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public Book createBook(Book book) {
-        return bookDao.addBook(book);
+    public Response createBook(@Valid @NotNull Book book) {
+        return Response.ok(bookDao.addBook(book)).build();
+    }
+
+    EntityTag createEntityTag(Book book) {
+        return new EntityTag(DigestUtils.md5Hex(book.toString()));
     }
 }

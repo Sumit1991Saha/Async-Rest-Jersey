@@ -7,11 +7,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import com.saha.ErrorMessages;
 import lombok.Data;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import javax.validation.constraints.NotNull;
 
 @Data
 @JsonPropertyOrder({"id"})
@@ -22,7 +24,9 @@ public class Book {
 
     @JacksonXmlProperty(isAttribute = true)
     long id;
+    @NotNull(message = ErrorMessages.INVALID_TITLE)
     String title;
+    @NotNull(message = ErrorMessages.INVALID_AUTHOR)
     String author;
     String isbn;
     Date publishedDate;
