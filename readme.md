@@ -45,3 +45,4 @@ Important Points :-
    or use HttpMethodOverrideFilter to use the PATCH method using post technique (in this case default connector provided by Jersey will work).
 8. By default Custom-Request-Filters are Post matching filter ie it is invoked after resource method is selected, 
    to make it pre matching filter it needs to be annotated with @PreMatching
+9. Using @NameBinding acts as a great tool to handle specific resources in our custom filter.
