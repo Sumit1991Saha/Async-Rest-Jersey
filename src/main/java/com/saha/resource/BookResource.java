@@ -1,11 +1,9 @@
 package com.saha.resource;
 
-import com.saha.ErrorMessages;
 import com.saha.annotation.PATCH;
 import com.saha.dao.BookDao;
 import com.saha.exception.NotFoundException;
 import com.saha.model.Book;
-import org.apache.commons.codec.digest.DigestUtils;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;

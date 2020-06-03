@@ -7,7 +7,6 @@ import com.saha.annotation.PATCH;
 import com.saha.dao.BookDao;
 import com.saha.exception.NotFoundException;
 import com.saha.model.Book;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.glassfish.jersey.server.ManagedAsync;
 
 import java.util.Collection;
