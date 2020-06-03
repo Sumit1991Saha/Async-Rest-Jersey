@@ -43,3 +43,5 @@ Important Points :-
     So instead of using Model objects, using hashmap on client side has made the client backward/forward compatible.
 7. Using grizzly connector (org.glassfish.jersey.connectors:jersey-grizzly-connector) to support Patch HTTP Method, 
    or use HttpMethodOverrideFilter to use the PATCH method using post technique (in this case default connector provided by Jersey will work).
+8. By default Custom-Request-Filters are Post matching filter ie it is invoked after resource method is selected, 
+   to make it pre matching filter it needs to be annotated with @PreMatching

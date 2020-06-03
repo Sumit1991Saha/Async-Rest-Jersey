@@ -6,6 +6,7 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import com.fasterxml.jackson.jaxrs.xml.JacksonXMLProvider;
 import com.saha.Constants;
 import com.saha.dao.BookDao;
+import com.saha.filter.PoweredByFilter;
 import com.saha.mapper.NotFoundExceptionMapper;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -38,6 +39,7 @@ public class BookApplication extends ResourceConfig {
 
         //Either add these with @Provider annotation or register in the Resource config class.
         //register(NotFoundExceptionMapper.class);
+        //register(PoweredByFilter.class);
 
         //Adding this filter to add support for un-implemented methods like PATCH/DELETE out of the box by Jersey.
         register(HttpMethodOverrideFilter.class);

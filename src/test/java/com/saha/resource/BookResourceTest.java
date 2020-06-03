@@ -288,6 +288,12 @@ public class BookResourceTest extends JerseyTest {
         assertEquals(MediaType.APPLICATION_JSON, jsonResponse.getHeaderString(Constants.CONTENT_TYPE));
     }
 
+    @Test
+    public void test_CustomResponseFilter() {
+        Response response = target("/books").path("1").request().get();
+        assertEquals(Constants.BLAH, response.getHeaderString(Constants.X_POWERED_BY));
+    }
+
 
 
 
