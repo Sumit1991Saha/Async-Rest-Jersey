@@ -4,10 +4,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.saha</groupId>
-    <artifactId>Async-Rest-Jersey</artifactId>
+    <artifactId>async-rest-jersey-sample</artifactId>
     <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
-    <name>Async-Rest-Jersey</name>
+    <name>async-rest-jersey-sample</name>
 
     <dependencyManagement>
         <dependencies>

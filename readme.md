@@ -4,14 +4,16 @@ Grizzly's main use case is the web server component for the GlassFish applicatio
 
 To run this project :-
 1. `mvn clean install`
-2. `java -jar target/Async-Rest-Jersey-1.0-SNAPSHOT.jar`
+2. `java -jar target/async-rest-jersey-sample-1.0-SNAPSHOT.jar`
 3. Go to `http://localhost:8080/async-rest-jersey/books` it should show some hardcoded data
 
 To build the docker image :-
-`docker build -t async-rest-jersey -f Dockerfile.app .`
+`docker build -t async-rest-jersey -f Dockerfile .`
 
 To run the app in the container :-
 `docker run -d -p 8080:8080 async-rest-jersey`
+
+TODO :- localhost is inaccessible inside docker, need to see how to create proper uri when passed to Grizzly server
 
 Maven command used to setup this project initially:-                
                   

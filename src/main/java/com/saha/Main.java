@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  */
 public class Main {
     // Base URI the Grizzly HTTP server will listen on
-    public static final String BASE_URI = "http://localhost:8080/async-rest-jersey/";
+    public static final String BASE_URI = "http://127.0.0.1:8080/async-rest-jersey/";
 
     /**
      * Starts Grizzly HTTP server exposing JAX-RS resources defined in this application.
@@ -40,7 +40,7 @@ public class Main {
      * @param args
      * @throws IOException
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
 
         Logger l = Logger.getLogger("org.glassfish.grizzly.http.server.HttpHandler");
         l.setLevel(Level.FINE);
@@ -51,9 +51,9 @@ public class Main {
 
         final HttpServer server = startServer();
         System.out.println(String.format("Jersey app started with WADL available at "
-                + "%sapplication.wadl\nHit enter to stop it...", BASE_URI));
-        System.in.read();
-        server.stop();
+                + "%sapplication.wadl\n", BASE_URI));
+        Thread.currentThread().join();
+        server.shutdownNow();
     }
 }
 
