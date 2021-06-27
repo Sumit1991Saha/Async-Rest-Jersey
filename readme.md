@@ -7,6 +7,12 @@ To run this project :-
 2. `java -jar target/Async-Rest-Jersey-1.0-SNAPSHOT.jar`
 3. Go to `http://localhost:8080/async-rest-jersey/books` it should show some hardcoded data
 
+To build the docker image :-
+`docker build -t async-rest-jersey -f Dockerfile.app .`
+
+To run the app in the container :-
+`docker run -d -p 8080:8080 async-rest-jersey`
+
 Maven command used to setup this project initially:-                
                   
 mvn archetype:generate \
