@@ -1,3 +1,12 @@
+This Project uses Grizzly as web server to host the application.
+Grizzly is a pure Java web service built using the NIO API. 
+Grizzly's main use case is the web server component for the GlassFish application server.
+
+To run this project :-
+1. `mvn clean install`
+2. `java -jar target/Async-Rest-Jersey-1.0-SNAPSHOT.jar`
+3. Go to `http://localhost:8080/async-rest-jersey/books` it should show some hardcoded data
+
 Maven command used to setup this project initially:-                
                   
 mvn archetype:generate \
